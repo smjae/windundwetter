@@ -1,25 +1,26 @@
-import chartJs from 'chart.js';
-const api = "/api/explore/v2.1/catalog/datasets/windmessung-bahnhofplatz-stadt-stgallen/records?limit=20"
+// import chartJs from 'chart.js';
 
-async function fetchData(url) {
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Fehler beim Abrufen der Daten von der API:', error);
-        return null;
-    }
-}
+var container = document.createElement('div');
+container.classList.add('chart-container');
+document.body.appendChild(container);
+//create elements for db data
+var dbData = document.createElement('div');
+dbData.classList.add('db-data');
+//append to body of index.html
+document.body.appendChild(dbData);
 
-async function displayData(url) {
-    const data = await fetchData(url);
-    if (data) {
-        data.forEach(item => {
-            console.log(item);
-        });
-    }
-}
+//db request
+var request = new XMLHttpRequest();
+request.open('GET', 'http://localhost:3000/data', true);
+request.onload = function () {
+  if (request.status >= 200 && request.status < 400) {
+    // Success!
+    var data = JSON.parse(request.responseText);
+    console.log(data);
+    dbData.innerHTML = data;
+  } else {
+    // We reached our target server, but it returned an error
 
+  }
+};
 
-displayData(api);
