@@ -70,5 +70,4 @@ if ($output_date == $wind_data[0]["measured_at"]) {
     echo "Data inserted successfully!";
 }
 
-  
     ?>

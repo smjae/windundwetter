@@ -1,0 +1,16 @@
+{
+  "name": "windundwetter",
+  "version": "1.0.0",
+  "description": "eine Website mit den aktuellen Wind- und Temperaturmessungen in St. Gallen",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "smjae",
+  "license": "ISC",
+  "dependencies": {
+    "vector": "^0.0.4",
+    "victor": "^1.1.0"
+  }
+}
