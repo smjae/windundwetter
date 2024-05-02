@@ -16,93 +16,45 @@ try {
   die("ERROR: Could not connect. " . $e->getMessage());
 }
 
-/* //geht noch nicht!!!
-// 2. Einfügen eines neuen Datensatzes
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $firstname = $_POST["firstname"];
-    $lastname = $_POST["lastname"];
-    $email = $_POST["email"];
-    
-    // Prepare the SQL statement
-    $sql = "INSERT INTO User (firstname, lastname, email) VALUES (:firstname, :lastname, :email)";
-    
-    // Prepare the statement
-    $stmt = $pdo->prepare($sql);
-    
-    // Bind the parameters
-    $stmt->bindParam(":firstname", $firstname);
-    $stmt->bindParam(":lastname", $lastname);
-    $stmt->bindParam(":email", $email);
-    
-    // Execute the statement
-    if ($stmt->execute()) {
-      echo "New record created successfully";
-    } else {
-      echo "Error: " . $stmt->errorInfo()[2];
-    }
-  }
-  
-  
-  // 3. Lesen eines Datensatzes mit id
-  if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $id = $_GET["id"];
-    
-    // Prepare the SQL statement
-    $sql = "SELECT * FROM User WHERE id = :id";
-    
-    // Prepare the statement
-    $stmt = $pdo->prepare($sql);
-    
-    // Bind the parameters
-    $stmt->bindParam(":id", $id);
-    
-    // Execute the statement
-    if ($stmt->execute()) {
-      $user = $stmt->fetch(PDO::FETCH_ASSOC);
-      $json = json_encode($user);
-    } else {
-      echo "Error: " . $stmt->errorInfo()[2];
-    }
-  }
-  
-  // 4. Lesen aller Datensätze, die den String $string in firstname, lastname oder email enthalten
-  if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $string = $_GET["string"];
-    
-    // Prepare the SQL statement
-    $sql = "SELECT * FROM User WHERE firstname LIKE :string OR lastname LIKE :string OR email LIKE :string";
-    
-    // Prepare the statement
-    $stmt = $pdo->prepare($sql);
-    
-    // Bind the parameters
-    $stmt->bindParam(":string", $string);
-    
-    // Execute the statement
-    if ($stmt->execute()) {
-      $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      $jsonList = json_encode($users);
-    } else {
-      echo "Error: " . $stmt->errorInfo()[2];
-    }
-  }
-
   // 1. Abfrage aller Datensätze aus der Tabelle User
-$sql = "SELECT * FROM User";
 
-*/?>
+$sql = "SELECT * FROM Wind ORDER BY measured_at DESC LIMIT 1";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$wind = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$jsonList = json_encode($wind);
+// print_r($jsonList);
+
+//save data from DB to variables
+$actual_wind_speed = $wind[0]["data_wind_speed"];
+$actual_wind_direction = $wind[0]["data_wind_direction"];
+$actual_air_temperature = $wind[0]["data_air_temperature"];
+$actual_maximum_wind_speed = $wind[0]["data_maximum_wind_speed"];
+$actual_measured_at = $wind[0]["measured_at"];
+
+
+//Datumsvariable umformen zu deutschem Format
+
+setlocale(LC_ALL, 'de_CH'); // Setzen Sie die Lokalisierung auf Deutsch
+
+$new_date = strftime("%d. %B %Y".", "."%H:%M Uhr", strtotime($actual_measured_at));
+
+?>
 
 <!DOCTYPE html>
-<html>
-
+<html lang="de">
 <head>
-  <meta charset="utf-8">
-  <title>PHP mit HTML</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8">
+  <title>Windmessung</title>
 
+</head>
 <body>
-  <h1><a href="crud_direkt.php">CRUD - PHP</a></h1>
-  <p>geht noch nicht, da DB fehlt...</p>
+  <h1>Wind & Wetter</h1>
+  <p>Zuletzt aktualisiert am: <?php echo $new_date; ?></p>
+  <p>Die aktuelle Windgeschwindigkeit beträgt <?php echo $actual_wind_speed; ?> km/h.</p>
+  <p>Die Windrichtung beträgt <?php echo $actual_wind_direction; ?> Grad.</p>
+  <p>Die aktuelle Lufttemperatur beträgt <?php echo $actual_air_temperature; ?> Grad Celsius.</p>
+  <p>Die maximale Windgeschwindigkeit beträgt <?php echo $actual_maximum_wind_speed; ?> km/h.</p>
+
 </body>
 </html>
