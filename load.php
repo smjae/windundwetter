@@ -54,7 +54,7 @@ $output_date = date("Y-m-d\TH:i:sP", $stringToDate);
 
 if ($output_date == $wind_data[0]["measured_at"]) {
     echo "it's the same";
-} else if ($output_date != $wind_data[0]["measured_at"]){ 
+} else if ($output_date != $wind_data[0]["measured_at"] || $last_record == null){ 
     echo "it's different";
     $sql = "INSERT INTO Wind (measured_at, data_air_temperature, data_maximum_wind_speed, data_wind_direction, data_wind_speed) VALUES (:measured_at, :data_air_temperature, :data_maximum_wind_speed, :data_wind_direction, :data_wind_speed)";
     $stmt = $pdo->prepare($sql);
