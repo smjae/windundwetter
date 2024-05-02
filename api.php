@@ -54,21 +54,3 @@ header('Content-Type: application/json');
 echo json_encode($data);
 
 ?>
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Windmessung</title>
-
-</head>
-<body>
-  <h1>Wind & Wetter</h1>
-  <p>Zuletzt aktualisiert am: <?php echo $new_date; ?></p>
-  <p>Die aktuelle Windgeschwindigkeit beträgt <?php echo $actual_wind_speed; ?> km/h.</p>
-  <p>Die Windrichtung beträgt <?php echo $actual_wind_direction; ?> Grad.</p>
-  <p>Die aktuelle Lufttemperatur beträgt <?php echo $actual_air_temperature; ?> Grad Celsius.</p>
-  <p>Die maximale Windgeschwindigkeit beträgt <?php echo $actual_maximum_wind_speed; ?> km/h.</p>
-
-</body>
-</html>
