@@ -23,8 +23,6 @@ let myColor = "#000000";
 // let temp5bg = "rgba(255, 82, 151, 0.5)";
 let body = document.querySelector("body");
 
-
-
 async function getDataFromDB() {
   try {
     const response = await fetch("api.php");
@@ -34,8 +32,9 @@ async function getDataFromDB() {
     // console.log(data.actual_wind_speed);
     moveBlobByWindSpeed(data.actual_wind_speed);
     // moveBlobByWindSpeed(1); //for testing
-    createBlob(strengthArray);
+    createBlob(strengthArray, data.actual_wind_speed);
     convertWindDirectionToRad(data.actual_wind_direction);
+    // convertWindDirectionToRad(0); //Test
     //round temperature
     roundData(data);
     changeColorByTemperature(temperature);
@@ -46,23 +45,25 @@ async function getDataFromDB() {
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-};
+}
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded and parsed");
   getDataFromDB();
 });
 
 function convertWindDirectionToRad(windDirection) {
-  // console.log(windDirection);
+  console.log("vor -90:" + windDirection);
 
-  let angleDeg = windDirection - 90;
-  if (angleDeg < 0) {
-    angleDeg = 360 + angleDeg;
-  }
-  // console.log("angleDeg: "+angleDeg);
+  // let angleDeg = windDirection; //-90 HELP?
+  let angleDeg = 270;
+  console.log("nach -90: " + angleDeg);
+  // if (angleDeg < 0) {
+  //   angleDeg = 360 + angleDeg;
+  // }
+  console.log("angleDeg: " + angleDeg);
   angle = angleDeg * (Math.PI / 180);
-  // console.log("angle: "+angle);
+  console.log("angle in RAD: " + angle);
 }
 
 function moveBlobByWindSpeed(windSpeed) {
@@ -147,19 +148,38 @@ function showData(data) {
   windgeschwEllipsen.classList.add("windgeschwEllipsen");
   windgeschwGruppe.append(windgeschwEllipsen);
 
+  calculateWindSpeedEllipses(data.actual_wind_speed);
+  // calculateWindSpeedEllipses(4); //Test
+
   //create 5 ellipses for wind speed
-  for (let i = 0; i < 5; i++) {
-    let ellipse = document.createElement("div");
-    ellipse.classList.add("ellipse");
-    ellipse.style.width = "10px";
-    ellipse.style.height = "10px";
-    windgeschwEllipsen.append(ellipse);
+  if (windStufe > 5) {
+    for (let i = 0; i < 5; i++) {
+      let ellipse = document.createElement("div");
+      ellipse.classList.add("ellipse");
+      ellipse.style =
+        "background-color:red; border: 1px solid red; height: 10px; width: 10px";
+      windgeschwEllipsen.append(ellipse);
+    }
+  } else {
+    for (let i = 0; i < windStufe; i++) {
+      let ellipse = document.createElement("div");
+      ellipse.classList.add("ellipse");
+      ellipse.style.width = "10px";
+      ellipse.style.height = "10px";
+      ellipse.style.backgroundColor = "black";
+      windgeschwEllipsen.append(ellipse);
+    }
+
+    for (let i = 0; i < 5 - windStufe; i++) {
+      let ellipse = document.createElement("div");
+      ellipse.classList.add("ellipse");
+      ellipse.style.width = "10px";
+      ellipse.style.height = "10px";
+      windgeschwEllipsen.append(ellipse);
+    }
   }
   console.log("ellipsen created");
 
-  calculateWindSpeedEllipses(windSpeed);
-  // fillEllipses(windStufe);
-  fillEllipses(4);
   windgeschwAnzeige.classList.add("windgeschwAnzeige");
 
   //Windspitzenanzeige
@@ -169,10 +189,9 @@ function showData(data) {
   anzeige.append(windspitzenAnzeige);
 
   //Measured at
-  let measuredAt = document.createElement("div");
-  measuredAt.innerHTML = "Zuletzt aktualisiert am: " + data.actual_measured_at;
-  measuredAt.classList.add("measuredAt");
-  body.append(measuredAt);
+  let measuredAt = document.querySelector(".measuredAt");
+  measuredAt.innerHTML =
+    "Zuletzt aktualisiert am: " + "<br>" + data.actual_measured_at;
 
   body.append(anzeige);
 }
@@ -238,7 +257,7 @@ function getDegreeFromDirection(windDirection) {
 }
 
 function calculateWindSpeedEllipses(windSpeed) {
-  // console.log(windSpeed);
+  console.log(windSpeed);
 
   //Windbezeichnungen nach Beaufortskala (https://hygrometer.guru/windstaerkentabelle/)
 
@@ -264,30 +283,27 @@ function calculateWindSpeedEllipses(windSpeed) {
     console.log("kein Wind");
     windStufe = 0;
   }
+
+  // fillEllipses(windStufe);
 }
 
-function fillEllipses(windStufe) {
-  let ellipses = document.querySelectorAll(".ellipse");
-  console.log(windStufe);
-  console.log(ellipses);
+// function fillEllipses(windStufe) {
+//   // Get all ellipses
+//   let ellipses = document.querySelectorAll(".ellipse");
+//   console.log(windStufe);
+//   console.log(ellipses);
 
-  // Loop through all ellipses and set their styles based on windStufe
-  ellipses.forEach((ellipse, index) => {
-    if (index < windStufe) {
-      // Fill the ellipse
-      ellipse.style.backgroundColor = index == 5 ? "red" : "#000000";
-    } else {
-      // Outline the ellipse
-      ellipse.style.border = "1px solid #000000";
-      ellipse.style.backgroundColor = "transparent";
-    }
-  });
-}
+//   // Loop through all ellipses and set their styles based on windStufe
+//   for (let i = 0; i < windStufe; i++) {
+//       // ellipses[i].style = "background-color:black";
+//       console.log("yay");
+//   }
+// }
 
 let canvas, ctx;
 let render, init;
 let blob;
-function createBlob(strengthArray) {
+function createBlob(strengthArray, windSpeed) {
   class Blob {
     constructor() {
       this.points = [];
@@ -523,6 +539,7 @@ function createBlob(strengthArray) {
   init = function () {
     canvas = document.createElement("canvas");
     canvas.setAttribute("touch-action", "none");
+    canvas.zIndex = -100;
 
     document.body.appendChild(canvas);
 
@@ -604,12 +621,13 @@ function createBlob(strengthArray) {
   };
 
   init();
+
+  calculateWindSpeedEllipses(windSpeed);
 }
 
 function mapRange(value, inMin, inMax, outMin, outMax) {
   return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 }
-
 
 function addAnimation() {
   console.log(windSpeed, temperature);
@@ -631,21 +649,111 @@ function addAnimation() {
   videoContainer.classList.add("videoContainer");
   animationContainer.append(videoContainer);
   for (let i = 0; i < videoCounter; i++) {
-    let video = document.createElement("video");
+    let video = document.createElement("img");
+    video.classList.add("video");
     video.autoplay = true;
     video.loop = true;
-    let source = document.createElement("source");
-    source.type = "video/mp4";
-    source.src = "../img/walking_animation.mp4";
-    video.append(source);
+    video.src = "./img/walking_animation.gif";
+    // let source = document.createElement("source");
+    // source.type = "video/gif";
+    // source.src = "./img/walking_animation.gif";
+    // video.append(source);
     video.preload = "auto";
     videoContainer.append(video);
     console.log(video);
   }
   // Append animationContainer to the body after the loop
   document.body.append(animationContainer);
-  video.addEventListener('load', function() {
-    // Video loaded, can now play the video
-    console.log("video loaded");
-});
 }
+
+//add eventlistener on info button
+document.querySelector(".infoButton").addEventListener("click", function () {
+  //create overlay with text
+  let overlay = document.createElement("div");
+  overlay.classList.add("overlay");
+overlay.style="display: flex; width: 350px; height: auto; transition: all .3s ease-in;";
+  //add eventlistener on close button
+  // let closeButton = document.createElement("button");
+  // closeButton.classList.add("closeButton");
+  // closeButton.innerHTML = "X";
+  // overlay.append(closeButton);
+
+  let closeContainer = document.createElement("div");
+  closeContainer.classList.add("close-container");
+  let leftright = document.createElement("div");
+  leftright.classList.add("leftright");
+  let rightleft = document.createElement("div");
+  rightleft.classList.add("rightleft");
+  let closeButton = document.createElement("label");
+  closeButton.classList.add("close");
+  closeButton.innerHTML = "close";
+  closeContainer.append(leftright);
+  closeContainer.append(rightleft);
+  closeContainer.append(closeButton);
+  overlay.append(closeContainer);
+
+  let title = document.createElement("div");
+  title.classList.add("titleOverlay");
+  title.innerHTML = "Über diese Website:";
+
+  let text = document.createElement("div");
+  text.classList.add("textOverlay");
+  text.innerHTML =
+    'Diese Visualisierung der Daten vom Bahnhof St. Gallen entstand im Rahmen eines studentischen Projekts im Studiengang "Multimedia Production". Die Daten stammen von opendata.swiss und werden von den St. Galler Stadtwerken (sgsw) zur Verfügung gestellt:<br> <a href="https://daten.stadt.sg.ch/explore/dataset/windmessung-bahnhofplatz-stadt-stgallen/information/?headless=" style="color: white">www.daten.stadt.sg.ch/windmessung-bahnhofplatz-stadt-stgallen</a>.';
+  let title2 = document.createElement("div");
+  title2.classList.add("titleOverlay");
+  title2.innerHTML = "Wie funktioniert es?";
+
+  let text2 = document.createElement("div");
+  text2.classList.add("textOverlay");
+  text2.innerHTML =
+    "Die gezeigten Daten sind Echtzeitmessungen des Windes und der Temperatur am Bahnhof St. Gallen. Diese werden per CRON-Job alle 10 Minuten in eine Datenbank gespeichert und von da aus abgerufen. So können auch ältere Messzeitpunkte abgerufen werden. Die Visualisierung verändert sich je nach Temperatur, Windrichtung oder Windgeschwindigkeit. Viel Spass beim Anschauen!";
+  overlay.append(title);
+  overlay.append(text);
+  overlay.append(title2);
+  overlay.append(text2);
+  document.body.append(overlay);
+
+  closeContainer.addEventListener("click", function () {
+    overlay.style.display = "none";
+  });
+});
+
+
+//verlauf
+//check if checkbox with id=dn is checked
+//if checked, change background color to dark mode
+//if unchecked, change background color to light mode
+//add event listener to checkbox
+document.getElementById("dn").addEventListener("change", function () {
+  //check if checkbox is checked
+  if (this.checked) {
+    //remove blob, text and video
+    let blob = document.querySelector("canvas");
+    blob.remove();
+    let text = document.querySelector(".anzeigeAllesCurrent");
+    text.remove();
+    let video = document.querySelector(".animationContainer");
+    video.remove();
+    //change background color to dark mode
+    body.style.backgroundColor = "rgb(3, 18, 49)";
+    //transition to dark mode is a swipe from right to left
+    body.style.transition = "background-color 0.3s ease-in-out";
+
+    //change color of text to white
+    body.style.color = "white";
+    document.querySelector(".infoButton").style.border = "3px solid white";
+    //change color of blob to white
+    
+    //change color of text to white
+    document.querySelector(".measuredAt").style.color = "white";
+    
+  } else {
+    getDataFromDB();
+    //change color of text to black
+    body.style.color = "black";
+    //change color of text to black
+    document.querySelector(".measuredAt").style.color = "black";
+    document.querySelector(".infoButton").style.border = "3px solid black";
+  }
+});
