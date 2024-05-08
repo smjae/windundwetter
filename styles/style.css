@@ -11,7 +11,9 @@
     width: 100%;
 }
 
-body, html { margin: 0; }
+body, html { 
+    margin: 0;
+ }
 
 canvas { position: fixed; touch-action: none; }
 
@@ -42,4 +44,45 @@ text-align: center;
 top: 10%;
 transform: translate(-50%, -50%);
 font-size: 1em;
+}
+
+
+.windgeschwEllipsen {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.ellipse {
+    /* background-color: red; */
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+
+.windgeschwGruppe {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.animationContainer {
+    display: flex;
+    justify-content: space-between; /* Spread items evenly */
+    width: 100%; /* Use entire width of the body */
+    position: fixed; /* Use fixed position */
+    bottom: 0;
+    height: 200px;
+}
+
+.videoContainer {
+    flex: 1; /* Each video container takes equal space */
+    overflow: hidden; /* Prevent videos from overflowing */
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+}
+
+.video {
+    width: 100%; /* Use entire width of the container */
 }
