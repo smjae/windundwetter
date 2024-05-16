@@ -144,7 +144,7 @@ canvas {
 
 .infoButton p {
   font-size: 1.5em;
-  line-height: 5px;
+  line-height: 6px;
   padding: 0;
   margin: 0;
 }
@@ -245,9 +245,10 @@ canvas {
 .toggleWrapper {
   position: absolute;
   top: 20px;
-  margin: 10px;
+  /* margin: 10px; */
   left: 50%;
   z-index: 5;
+  cursor: pointer;
 
   input {
     position: absolute;
@@ -284,54 +285,54 @@ canvas {
   }
 } */
 .toggle {
-  position : relative ;
-  display : flex;
+  position: relative;
+  display: flex;
   /* width : 100px; */
   width: 150px;
-  height : 52px;
+  height: 52px;
   background-color: transparent;
   border-radius: 10px;
-  border: 2px solid gray;
+  border: 2px solid black;
   padding-top: 5px;
-align-items: center;
-justify-content: space-around;
-  transition:  all 0.5s;
+  align-items: center;
+  justify-content: space-around;
+  transition: all 0.5s;
+  cursor: pointer;
 }
 
-
 /* After slide changes */
-    .toggle:after {
-        content: '';
-        position: absolute;
-        /* width: 50px; */
-            width: 75px;
-        height: 50px;
-        /* border-radius: 50%; */
-        /* border-radius: 16%; */
-        border-radius: 10%;
-        background-color: gray;
-        top: 0px; 
-        left: 0px;
-        transition:  all 0.5s;
-    }
+.toggle:after {
+  content: "";
+  position: absolute;
+  /* width: 50px; */
+  width: 75px;
+  height: 50px;
+  /* border-radius: 50%; */
+  /* border-radius: 16%; */
+  border-radius: 10%;
+  background-color: black;
+  top: 0px;
+  left: 0px;
+  transition: all 0.5s;
+}
 
-    .dn:checked + .toggle::after {
-      /* left : 49px;  */
-      left: 73px;
-  }
-         
-  /* Checkbox checked toggle label bg color */
-  .dn:checked + .toggle {
-      background-color: transparent;
-      color: white;
-  }
-         
-  /* Checkbox vanished */
-  .dn { 
-      display : none;
-  }
+.dn:checked + .toggle::after {
+  /* left : 49px;  */
+  left: 73px;
+  background-color: white;
+}
 
+/* Checkbox checked toggle label bg color */
+.dn:checked + .toggle {
+  background-color: transparent;
+  color: white;
+  border-color: white;
+}
 
+/* Checkbox vanished */
+.dn {
+  display: none;
+}
 
 .toggle__handler {
   display: inline-block;
@@ -378,6 +379,7 @@ input:checked {
   margin-bottom: 1rem;
   flex-wrap: wrap;
   background-color: transparent;
+  align-items: center;
 }
 
 .scrubberContainer input[type="range"] + label {
@@ -456,12 +458,40 @@ input:checked {
 
 #scrubberValue {
   color: white;
+  width: 77%;
 }
 
+#controls > button {
+  background-color: transparent;
+  border: none;
+}
+
+#controls > button > i {
+  cursor: pointer;
+  color: rgb(101, 122, 127);
+  font-size: 15pt;
+}
+
+#rangeGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
 /*responsive with media queries*/
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 600px), (max-height: 600px) and (orientation: landscape) {
   #logo {
-    width: 200px;
+    width: 150px;
+  }
+
+  .title {
+    font-size: 0.8em;
+  }
+
+  .measuredAt {
+    font-size: 0.6em;
   }
 
   .mobileOverlay {
@@ -473,7 +503,8 @@ input:checked {
     bottom: 20px;
     left: 50%;
     transform: translate(-50%, -50%);
-    top: 90%;
+    top: 47%;
+    width: 100%;
   }
 
   .animationContainer {
@@ -485,15 +516,6 @@ input:checked {
   .videoContainer {
     display: none;
   }
-
-  /* canvas {
-    width: 80%;
-    height: 80%;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  } */
 
   .mobileOverlay {
     /*append to the end of the page so the user can scroll down*/
@@ -512,6 +534,34 @@ input:checked {
   }
 
   .scrubberContainer {
-    bottom: 20%;
+    bottom: 5%;
   }
+
+  .toggle {
+    background-color: transparent;
+    border: none;
+    justify-content: space-between;
+    width: 80%;
+    margin: auto;
+  }
+
+
+
+  .toggle::after {
+    display: none;
+    top: -1px;
+  }
+
+  .dn:checked + .toggle {
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  .toggleWrapper {
+  left: 80%;
+  top: 10%;
+  bottom: 100%;
+  }
+
 }
