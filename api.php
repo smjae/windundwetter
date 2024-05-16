@@ -36,7 +36,8 @@ $jsonList = json_encode($wind);
 
 setlocale(LC_ALL, 'de_CH'); // Setzen Sie die Lokalisierung auf Deutsch
 
-$new_date = strftime("%d. %B %Y".", "."%H:%M Uhr", strtotime($wind[0]["measured_at"]));
+// $new_date = strftime("%d. %B %Y".", "."%H:%M Uhr", strtotime($wind[0]["measured_at"]));
+$new_date = date_format(date_create($wind[0]["measured_at"]), "d. F Y, H:i") . " Uhr";
 
 $data = array(
   "actual_wind_speed" => $wind[0]["data_wind_speed"],
@@ -51,5 +52,3 @@ header('Content-Type: application/json');
 
 // Output the data as JSON
 echo json_encode($data);
-
-?>

@@ -306,6 +306,7 @@ function createBlob(strengthArray, windSpeed) {
     }
 
     resetProperties() {
+      console.log("resetting properties");
       this.points.forEach((point) => {
         point.radialEffect = 0; // Reset radialEffect for each point
         point.speed = 0; // Reset speed for each point
@@ -714,6 +715,11 @@ function switchToDarkMode() {
   document.querySelector(".title").innerHTML =
     "Wetterdaten der letzten 48 Stunden am Bahnhof St. Gallen";
   document.querySelector("#logo").src = "./img/logo_windundwetter_white.png";
+
+  if (window.innerWidth < 600) {
+    document.querySelector(".heute").innerHTML = `<i class="fa fa-arrow-left" aria-hidden="true"></i> Heute`;
+    document.querySelector(".verlauf").innerHTML = "";
+  }
 }
 
 // Switch to light mode
@@ -724,6 +730,10 @@ function switchToLightMode() {
   document.querySelector(".title").innerHTML =
     "aktuelle Wetterdaten<br>am Bahnhof St. Gallen";
   document.querySelector("#logo").src = "./img/logo_windundwetter.png";
+  if (window.innerWidth < 600) {
+    document.querySelector(".heute").innerHTML = "";
+    document.querySelector(".verlauf").innerHTML = `Verlauf <i class="fa fa-arrow-right" aria-hidden="true"></i>`;
+  }
 }
 
 // Remove elements before mode change
@@ -762,10 +772,24 @@ function changeTextColor(color) {
 
 // Create containers and scrubber for past data
 function timePassed() {
+  // const scrubberContainer = document.createElement("div");
+  // scrubberContainer.classList.add("scrubberContainer");
+  // scrubberContainer.innerHTML = `<input id="scrubberControl" type="range" value="0" />
+  // <div id="scrubberValue"></div>`;
+  // body.append(scrubberContainer);
   const scrubberContainer = document.createElement("div");
   scrubberContainer.classList.add("scrubberContainer");
-  scrubberContainer.innerHTML = `<input id="scrubberControl" type="range" value="0" />
-  <div id="scrubberValue"></div>`;
+  scrubberContainer.innerHTML = `
+  <div id="rangeGroup">
+  <div id="controls">
+    <button id="playButton"><i class="fa fa-play" aria-hidden="true"></i></button>
+    <button id="pauseButton" style="display:none"><i class="fa fa-pause" aria-hidden="true"></i></button>
+  </div>
+  <input id="scrubberControl" type="range" value="0" />
+
+  </div>
+  <div id="scrubberValue"></div>
+`;
   body.append(scrubberContainer);
 }
 
@@ -782,10 +806,29 @@ async function getPastData() {
 }
 
 // Initialize scrubber for past data
+// function initializeScrubber(data) {
+//   const scrubberControl = document.querySelector("#scrubberControl");
+//   const scrubberValue = document.querySelector("#scrubberValue");
+//   //get value where data[0].hour_start.split(" ")[1].split(":")[0] is 00 and return what percentage of the scrubber it is
+
+//   scrubberControl.max = data.length - 1;
+//   scrubberControl.value = data.length - 1;
+//   dataIndex = data.length - 1;
+//   displayDataForTimestamp(data[dataIndex]);
+//   updateScrubberValue(scrubberValue, data[dataIndex].hour_start);
+
+//   scrubberControl.addEventListener("input", function () {
+//     document.querySelector("canvas")?.remove();
+//     blob.resetProperties();
+//     dataIndex = parseInt(this.value);
+//     displayDataForTimestamp(data[dataIndex]);
+//   });
+// }
+
+// Initialize scrubber for past data
 function initializeScrubber(data) {
   const scrubberControl = document.querySelector("#scrubberControl");
   const scrubberValue = document.querySelector("#scrubberValue");
-  //get value where data[0].hour_start.split(" ")[1].split(":")[0] is 00 and return what percentage of the scrubber it is
 
   scrubberControl.max = data.length - 1;
   scrubberControl.value = data.length - 1;
@@ -793,11 +836,62 @@ function initializeScrubber(data) {
   displayDataForTimestamp(data[dataIndex]);
   updateScrubberValue(scrubberValue, data[dataIndex].hour_start);
 
+  let isPlaying = false;
+  let scrubberInterval;
+
+  // Toggle play/pause
+  const playButton = document.querySelector("#playButton");
+  const pauseButton = document.querySelector("#pauseButton");
+
+  playButton.addEventListener("click", () => {
+    isPlaying = true;
+    playButton.disabled = true;
+    playButton.style.opacity = "0.5";
+    playButton.style.display = "none";
+    pauseButton.disabled = false;
+    pauseButton.style.display = "block";
+    pauseButton.style.opacity = "1";
+
+    scrubberInterval = setInterval(() => {
+      if (scrubberControl.value > 0) {
+        blob.resetProperties();
+        scrubberControl.value--;
+        dataIndex = scrubberControl.value;
+        displayDataForTimestamp(data[dataIndex]);
+      } else {
+        clearInterval(scrubberInterval);
+        isPlaying = false;
+        playButton.disabled = false;
+        playButton.style.opacity = "1";
+        playButton.style.display = "block";
+        pauseButton.disabled = true;
+        pauseButton.style.display = "none";
+        pauseButton.style.opacity = "0.5";
+
+        // Reset to the end of the slider and pause playback
+        scrubberControl.value = scrubberControl.max;
+      }
+    }, 500); // Change this value to adjust the speed
+  });
+
+  pauseButton.addEventListener("click", () => {
+    clearInterval(scrubberInterval);
+    isPlaying = false;
+    playButton.disabled = false;
+    playButton.style.display = "block";
+    playButton.style.opacity = "1";
+    pauseButton.disabled = true;
+    pauseButton.style.display = "none";
+    pauseButton.style.opacity = "0.5";
+  });
+
+  // Update data when scrubber value changes
   scrubberControl.addEventListener("input", function () {
-    document.querySelector("canvas")?.remove();
-    blob.resetProperties();
-    dataIndex = parseInt(this.value);
-    displayDataForTimestamp(data[dataIndex]);
+    if (!isPlaying) {
+      blob.resetProperties();
+      dataIndex = parseInt(this.value);
+      displayDataForTimestamp(data[dataIndex]);
+    }
   });
 }
 
@@ -850,10 +944,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function checkWindowWidth() {
-  if (window.innerWidth < 600) {
+  if (window.innerWidth < 600 || window.innerHeight < 600) {
     //remove all overlays
     document.querySelector(".mobileOverlay")?.remove();
 
+      document.querySelector(".heute").innerHTML = "";
+      document.querySelector(".verlauf").innerHTML = `Verlauf <i class="fa fa-arrow-right" aria-hidden="true"></i>`;
+   
     // document.querySelector(".infoButton").style.display = "none";
     const mobileOverlay = document.createElement("div");
     mobileOverlay.classList.add("mobileOverlay");
@@ -902,6 +999,7 @@ function checkWindowWidth() {
   } else {
     document.querySelector(".mobileOverlay")?.remove();
   }
+
 }
 
 // Call checkWindowWidth initially to create overlay if needed
