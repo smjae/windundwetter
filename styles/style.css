@@ -507,15 +507,15 @@ input:checked {
     width: 100%;
   }
 
-  .animationContainer {
+  /* .animationContainer {
     display: none;
-  }
+  } */
   .svg_container {
     display: none;
   }
-  .videoContainer {
+  /* .videoContainer {
     display: none;
-  }
+  } */
 
   .mobileOverlay {
     /*append to the end of the page so the user can scroll down*/
