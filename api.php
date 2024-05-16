@@ -18,26 +18,25 @@ try {
 
   // 1. Abfrage aller Datensätze aus der Tabelle User
 
+
+//save data from DB to variables
+// $actual_wind_speed = $wind[0]["data_wind_speed"];
+// $actual_wind_direction = $wind[0]["data_wind_direction"];
+// $actual_air_temperature = $wind[0]["data_air_temperature"];
+// $actual_maximum_wind_speed = $wind[0]["data_maximum_wind_speed"];
+// $actual_measured_at = $wind[0]["measured_at"];
+
 $sql = "SELECT * FROM Wind ORDER BY measured_at DESC LIMIT 1";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $wind = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $jsonList = json_encode($wind);
-// print_r($jsonList);
-
-//save data from DB to variables
-$actual_wind_speed = $wind[0]["data_wind_speed"];
-$actual_wind_direction = $wind[0]["data_wind_direction"];
-$actual_air_temperature = $wind[0]["data_air_temperature"];
-$actual_maximum_wind_speed = $wind[0]["data_maximum_wind_speed"];
-$actual_measured_at = $wind[0]["measured_at"];
-
 
 //Datumsvariable umformen zu deutschem Format
 
 setlocale(LC_ALL, 'de_CH'); // Setzen Sie die Lokalisierung auf Deutsch
 
-$new_date = strftime("%d. %B %Y".", "."%H:%M Uhr", strtotime($actual_measured_at));
+$new_date = strftime("%d. %B %Y".", "."%H:%M Uhr", strtotime($wind[0]["measured_at"]));
 
 $data = array(
   "actual_wind_speed" => $wind[0]["data_wind_speed"],
