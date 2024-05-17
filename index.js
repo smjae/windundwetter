@@ -19,7 +19,6 @@ let distanceFromPoint = 5000;
 let counter = 0;
 let videoSource;
 
-// import Chart from 'chart.js/auto'
 
 // Fetch data from the database and process it
 async function getDataFromDB() {
@@ -244,7 +243,7 @@ function updateTextPositionOld() {
     anzeige.style.left = `${middle.x}px`;
   }
 
-  // requestAnimationFrame(updateTextPosition);
+  requestAnimationFrame(updateTextPosition);
 }
 
 // Find the middle point of the blob
@@ -309,40 +308,12 @@ function createBlob(strengthArray, windSpeed) {
     }
 
     resetProperties() {
-      console.log("resetting properties");
       this.points.forEach((point) => {
         point.radialEffect = 0; // Reset radialEffect for each point
         point.speed = 0; // Reset speed for each point
         point.acceleration = 0;
-
-        // point.azimuth = Math.PI - point.azimuth; // Reset azimuth for each point
-        point.azimuth = 0; // Reset azimuth for each point
-        point._acceleration = 0; // Reset acceleration for each point
-
-        point._speed = 0; // Reset speed for each point
-        point._radialEffect = 0; // Reset radialEffect for each point
-
-        //reset elasticity and friction
-        point.elasticity = 0.002;
-        point.friction = 0.01;
-        //reset all ather properties
-        point._components = {
-          x: Math.cos(point.azimuth),
-          y: Math.sin(point.azimuth),
-        };
-        angle = 0;
-        temperature = 0;
-        middle;
         strength = { x: 1.5, y: 1.5 };
-        //  strengthArray = {};
         dataIndex = 0;
-        // myColor = "#000000";
-        body = document.querySelector("body");
-        bodyDiv = document.querySelector(".bodyDiv");
-        blob;
-        distanceFromPoint = 0;
-
-        // distanceFromPoint = 5000;
       });
     }
 
@@ -473,8 +444,7 @@ function createBlob(strengthArray, windSpeed) {
       if (this.acceleration > 0.5 || this.acceleration < -0.5) {
         this.acceleration = 0;
       }
-      // this.speed += this.acceleration * 2;
-      // this.radialEffect += this.speed * 5;
+
     }
 
     get position() {
@@ -488,25 +458,6 @@ function createBlob(strengthArray, windSpeed) {
       };
     }
 
-    // get elasticity() {
-    //   return this._elasticity || 0.002;
-    // }
-    // set elasticity(value) {
-    //   if (typeof value === "number") {
-    //     this._elasticity = value;
-    //
-
-    //   }
-    // }
-
-    // get friction() {
-    //   return this._friction || 0.01;
-    // }
-    // set friction(value) {
-    //   if (typeof value === "number") {
-    //     this._friction = value;
-    //   }
-    // }
 
     get acceleration() {
       return this._acceleration || 0;
@@ -514,12 +465,7 @@ function createBlob(strengthArray, windSpeed) {
     set acceleration(value) {
       if (typeof value === "number") {
         this._acceleration = value;
-        // if (this._acceleration > 0.5 || this._acceleration < -0.5) {
-        //   this._acceleration = 0;
-        // }
-        // this._acceleration = 0;
-        // this.speed += this._acceleration * 2;
-        //random numbers between -0.5 and 0.5
+  
         if (this.speed > 0.5 || this.speed < -0.5) {
           this.speed = 0.5;
         }
@@ -585,7 +531,6 @@ function createBlob(strengthArray, windSpeed) {
             Math.sqrt(strength.x * strength.x + strength.y * strength.y) * 10;
           if (strength > 50) strength = 50;
           nearestPoint.acceleration = strength / 100;
-          // nearestPoint.acceleration = strength / 100;
         }
       }
 
@@ -635,6 +580,9 @@ function addAnimation() {
   }
 
   video.src = videoSource;
+  video.alt = "animation";
+  video.ariaRole = "img";
+  video.ariaLabel = "animation";
   video.preload = "auto";
   videoContainer.append(video);
 
@@ -725,7 +673,7 @@ function switchToDarkMode() {
   changeTextColor("white");
   document.querySelector(".measuredAt").style.display = "none";
   document.querySelector(".title").innerHTML =
-    "Wetterdaten der letzten 48 Stunden am Bahnhof St. Gallen";
+    "Wetterdaten der letzten Tage am Bahnhof St. Gallen";
   document.querySelector("#logo").src = "./img/logo_windundwetter_white.png";
 
   if (window.innerWidth < 600) {
@@ -789,11 +737,7 @@ function changeTextColor(color) {
 
 // Create containers and scrubber for past data
 function timePassed() {
-  // const scrubberContainer = document.createElement("div");
-  // scrubberContainer.classList.add("scrubberContainer");
-  // scrubberContainer.innerHTML = `<input id="scrubberControl" type="range" value="0" />
-  // <div id="scrubberValue"></div>`;
-  // body.append(scrubberContainer);
+
   const scrubberContainer = document.createElement("div");
   scrubberContainer.classList.add("scrubberContainer");
   scrubberContainer.innerHTML = `
@@ -822,25 +766,6 @@ async function getPastData() {
   }
 }
 
-// Initialize scrubber for past data
-// function initializeScrubber(data) {
-//   const scrubberControl = document.querySelector("#scrubberControl");
-//   const scrubberValue = document.querySelector("#scrubberValue");
-//   //get value where data[0].hour_start.split(" ")[1].split(":")[0] is 00 and return what percentage of the scrubber it is
-
-//   scrubberControl.max = data.length - 1;
-//   scrubberControl.value = data.length - 1;
-//   dataIndex = data.length - 1;
-//   displayDataForTimestamp(data[dataIndex]);
-//   updateScrubberValue(scrubberValue, data[dataIndex].hour_start);
-
-//   scrubberControl.addEventListener("input", function () {
-//     document.querySelector("canvas")?.remove();
-//     blob.resetProperties();
-//     dataIndex = parseInt(this.value);
-//     displayDataForTimestamp(data[dataIndex]);
-//   });
-// }
 
 // Initialize scrubber for past data
 function initializeScrubber(data) {
@@ -1020,12 +945,9 @@ function checkWindowWidth() {
   }
 }
 
-// Call checkWindowWidth initially to create overlay if needed
 
 // Event listener to check window width on resize
 window.addEventListener("resize", checkWindowWidth);
-
-//analyze blob and its properties and console.log the biggest changes over time
 
 function addScroll() {
   const scrollContainer = document.createElement("div");
@@ -1120,13 +1042,6 @@ function createChart(data) {
         },
         responsive: true, // Enable responsiveness
         maintainAspectRatio: false, // Allow the chart to completely fill its container
-        plugins: {
-          title: {
-            display: true,
-            text: (ctx) =>
-              "Point Style: " + ctx.chart.data.datasets[0].pointStyle,
-          },
-        },
       },
     },
   });

@@ -1,6 +1,5 @@
 <?php
 require_once 'config.php';
-echo "Hello Load!";
 
 include 'transform.php';  
 
@@ -46,11 +45,11 @@ $sql = "SELECT * FROM Wind ORDER BY measured_at DESC LIMIT 1";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $last_record = $stmt->fetch();//fetch last measured date and time from DB
-// print_r("last_record: ".$last_record["measured_at"]); 
+
 $stringToDate = strtotime($last_record["measured_at"]);
-// echo "stringToDate: ".$stringToDate;
+
 $output_date = date("Y-m-d\TH:i:sP", $stringToDate);
-// echo "output_date: ".$output_date;
+
 
 if ($output_date == $wind_data[0]["measured_at"]) {
     echo "it's the same";
@@ -69,5 +68,3 @@ if ($output_date == $wind_data[0]["measured_at"]) {
     }
     echo "Data inserted successfully!";
 }
-
-    ?>
