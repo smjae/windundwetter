@@ -13,10 +13,13 @@ let strengthArray = {};
 let dataIndex = 0;
 let myColor = "#000000";
 let body = document.querySelector("body");
+let bodyDiv = document.querySelector(".bodyDiv");
 let blob;
 let distanceFromPoint = 5000;
 let counter = 0;
 let videoSource;
+
+// import Chart from 'chart.js/auto'
 
 // Fetch data from the database and process it
 async function getDataFromDB() {
@@ -147,7 +150,7 @@ function showData(data) {
   const measuredAt = document.querySelector(".measuredAt");
   measuredAt.innerHTML = `Zuletzt aktualisiert am: <br>${data.actual_measured_at}`;
 
-  body.append(anzeige);
+  bodyDiv.append(anzeige);
 }
 
 // Display data on the UI
@@ -190,7 +193,7 @@ function showDataOld(data) {
     windgeschwEllipsen.append(ellipse);
   }
 
-  body.append(anzeige);
+  bodyDiv.append(anzeige);
 }
 //update data when scrubbing
 function updatePastDataText(data) {
@@ -333,8 +336,9 @@ function createBlob(strengthArray, windSpeed) {
         strength = { x: 1.5, y: 1.5 };
         //  strengthArray = {};
         dataIndex = 0;
-        myColor = "#000000";
+        // myColor = "#000000";
         body = document.querySelector("body");
+        bodyDiv = document.querySelector(".bodyDiv");
         blob;
         distanceFromPoint = 0;
 
@@ -554,7 +558,7 @@ function createBlob(strengthArray, windSpeed) {
     const canvas = document.createElement("canvas");
     canvas.setAttribute("touch-action", "none");
     canvas.zIndex = -100;
-    document.body.appendChild(canvas);
+    bodyDiv.appendChild(canvas);
 
     const resize = function () {
       canvas.width = window.innerWidth;
@@ -634,7 +638,7 @@ function addAnimation() {
   video.preload = "auto";
   videoContainer.append(video);
 
-  document.body.append(animationContainer);
+  bodyDiv.append(animationContainer);
 }
 
 // Event listener for info button
@@ -683,7 +687,7 @@ document.querySelector(".infoButton").addEventListener("click", function () {
     overlay.append(text);
     overlay.append(title2);
     overlay.append(text2);
-    document.body.append(overlay);
+    bodyDiv.append(overlay);
 
     closeContainer.addEventListener("click", function () {
       overlay.style.display = "none";
@@ -695,8 +699,16 @@ document.querySelector(".infoButton").addEventListener("click", function () {
 document.getElementById("dn").addEventListener("change", function () {
   if (this.checked) {
     switchToDarkMode();
+    console.log("switched to dark mode");
     getPastData();
+    console.log("got past data");
     timePassed();
+    console.log("time passed");
+    if (window.innerWidth > 600) {
+      addScroll();
+      getTemperatureforChart();
+    }
+    console.log("added scroll");
   } else if (blob) {
     switchToLightMode();
     getDataFromDB();
@@ -717,7 +729,9 @@ function switchToDarkMode() {
   document.querySelector("#logo").src = "./img/logo_windundwetter_white.png";
 
   if (window.innerWidth < 600) {
-    document.querySelector(".heute").innerHTML = `<i class="fa fa-arrow-left" aria-hidden="true"></i> Heute`;
+    document.querySelector(
+      ".heute"
+    ).innerHTML = `<i class="fa fa-arrow-left" aria-hidden="true"></i> Heute`;
     document.querySelector(".verlauf").innerHTML = "";
   }
 }
@@ -732,7 +746,9 @@ function switchToLightMode() {
   document.querySelector("#logo").src = "./img/logo_windundwetter.png";
   if (window.innerWidth < 600) {
     document.querySelector(".heute").innerHTML = "";
-    document.querySelector(".verlauf").innerHTML = `Verlauf <i class="fa fa-arrow-right" aria-hidden="true"></i>`;
+    document.querySelector(
+      ".verlauf"
+    ).innerHTML = `Verlauf <i class="fa fa-arrow-right" aria-hidden="true"></i>`;
   }
 }
 
@@ -743,6 +759,7 @@ function removeElementsForModeChange() {
   document.querySelector(".anzeigeAllesCurrent")?.remove();
   document.querySelector(".animationContainer")?.remove();
   document.querySelector(".scrubberContainer")?.remove();
+  document.querySelector(".scrollContainer")?.remove();
 
   //reset variables
 
@@ -790,7 +807,7 @@ function timePassed() {
   </div>
   <div id="scrubberValue"></div>
 `;
-  body.append(scrubberContainer);
+  bodyDiv.append(scrubberContainer);
 }
 
 // Fetch past data and display it
@@ -948,9 +965,11 @@ function checkWindowWidth() {
     //remove all overlays
     document.querySelector(".mobileOverlay")?.remove();
 
-      document.querySelector(".heute").innerHTML = "";
-      document.querySelector(".verlauf").innerHTML = `Verlauf <i class="fa fa-arrow-right" aria-hidden="true"></i>`;
-   
+    document.querySelector(".heute").innerHTML = "";
+    document.querySelector(
+      ".verlauf"
+    ).innerHTML = `Verlauf <i class="fa fa-arrow-right" aria-hidden="true"></i>`;
+
     // document.querySelector(".infoButton").style.display = "none";
     const mobileOverlay = document.createElement("div");
     mobileOverlay.classList.add("mobileOverlay");
@@ -990,7 +1009,7 @@ function checkWindowWidth() {
     mobileOverlay.append(text);
     mobileOverlay.append(title2);
     mobileOverlay.append(text2);
-    document.body.insertAdjacentElement("beforeend", mobileOverlay);
+    bodyDiv.append(mobileOverlay);
 
     closeContainer.addEventListener("click", function () {
       mobileOverlay.style.display = "none";
@@ -999,7 +1018,6 @@ function checkWindowWidth() {
   } else {
     document.querySelector(".mobileOverlay")?.remove();
   }
-
 }
 
 // Call checkWindowWidth initially to create overlay if needed
@@ -1008,3 +1026,108 @@ function checkWindowWidth() {
 window.addEventListener("resize", checkWindowWidth);
 
 //analyze blob and its properties and console.log the biggest changes over time
+
+function addScroll() {
+  const scrollContainer = document.createElement("div");
+  scrollContainer.classList.add("scrollContainer");
+
+  const scrollGraphic = document.createElement("canvas");
+  scrollGraphic.ariaLabel =
+    "Grafik der Temperaturverläufe der letzten zwei Wochen";
+  scrollGraphic.role = "img";
+  scrollGraphic.classList.add("scrollGraphic");
+  scrollContainer.append(scrollGraphic);
+
+  body.insertAdjacentElement("beforeend", scrollContainer);
+}
+
+async function getTemperatureforChart() {
+  console.log("hallo");
+  try {
+    const response = await fetch("apiTemperature.php");
+    const data = await response.json();
+
+    createChart(data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+function createChart(data) {
+  // Create a Mixed Chart with Chart.js
+  const ctx = document.querySelector(".scrollGraphic").getContext("2d");
+  const myChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: data.map((item) => item.day_start),
+      datasets: [
+        {
+          type: "line",
+          label: "Average Temperature in °C",
+          data: data.map((item) => item.avg_air_temperature),
+          borderWidth: 2,
+          hoverBorderWidth: 3,
+          borderColor: myColor,
+          backgroundColor: myColor,
+          cubicInterpolationMode: "monotone",
+          radius: 3,
+          hoverRadius: 6,
+        },
+        {
+          label: "Lufttemperatur tagsüber in °C",
+          data: data.map((item) => item.avg_finer_air_temperature_day),
+          borderWidth: 1,
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          hoverBorderWidth: 2,
+          hoverBackgroundColor: "rgba(75, 192, 192, 0.5)",
+        },
+        {
+          label: "Lufttemperatur nachts in °C",
+          data: data.map((item) => item.avg_finer_air_temperature_night),
+          borderWidth: 1,
+          backgroundColor: "rgba(3, 18, 49, 0.2)",
+          borderColor: "rgba(3, 18, 49, 1)",
+          hoverBorderWidth: 2,
+          hoverBackgroundColor: "rgba(3, 18, 49, 0.5)",
+        },
+      ],
+    },
+    options: {
+      events: ["mousemove", "mouseout", "click", "touchstart", "touchmove"],
+      scales: {
+        y: {
+          beginAtZero: true,
+          type: "linear",
+          position: "left",
+        },
+        x: {
+          beginAtZero: true,
+        },
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: "white",
+          },
+        },
+        tooltip: {
+          enabled: true, // Enable tooltips
+          intersect: false, // Show multiple tooltips when hovering multiple points
+        },
+        hover: {
+          mode: "point", // Highlight the nearest item
+          intersect: true, // Allow interaction even when hovering over multiple items
+        },
+        responsive: true, // Enable responsiveness
+        maintainAspectRatio: false, // Allow the chart to completely fill its container
+        plugins: {
+          title: {
+            display: true,
+            text: (ctx) =>
+              "Point Style: " + ctx.chart.data.datasets[0].pointStyle,
+          },
+        },
+      },
+    },
+  });
+}
