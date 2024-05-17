@@ -65,4 +65,3 @@ try {
     echo "An error occurred while fetching the data: " . $e->getMessage();
     exit();
 }
-?>
