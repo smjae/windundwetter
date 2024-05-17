@@ -8,6 +8,8 @@ In diesem Projekt werden automatisch im 10-20-Minutentakt Daten von einer API ab
 # Learnings
 Da ich mich diesem Projekt alleine gestellt habe, sind die Learnings massiv. Grundsätzlich habe ich ein allgemeines Verständnis von Webentwicklung erhalten. Die Erfahrung, einmal komplett alleine eine Website zu bauen und live zu schalten, ist ebenfalls ein wichtiges Learning und auch ein Erfolgserlebnis. Was machen APIs genau, wie erhält man die Daten und wie füllt man damit eine Website ab? All diese Dinge durfte ich in diesen zwei Wochen lernen.
 
+...und ja, ich durfte auch lernen, dass man in einem Klick seine Datenbank der letzten 2.5 Wochen löschen kann... daher die mangelnde Anzahl an Daten. 
+
 # Schwierigkeiten
 Der Blob auf meiner Website entstand aus einer zündenden Idee und wenn die mal da ist, komme ich schlecht davon weg. Leider wurde er dann jedoch auch zu meinem Endgegner, da die technische Umsetzung davon sehr kompliziert und einzelne Spezifikationen nicht so einfach anzupassen waren. So hatte ich zwei Wochen lang das Problem, dass der Blob (nicht zu verwechseln mit dem Objekt "Binary Large Objects") zwar bei jeder Aktualisierung neu erstellt wurde,sich trotzdem wilder und wilder bewegte. Bis ich dieses Problem lösen konnte, war ich schon mehrere Male an Rande der Verzweiflung. 
 Ansonsten merkte ich, wie schlecht mein Zeitmanagement war, weil ich viel Zeit in Details wie den Scrubber investierte und so nicht ganz alle meine Ideen umsetzen konnte bezüglich der Gestaltung.
