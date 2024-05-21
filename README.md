@@ -3,7 +3,7 @@ eine Website mit den aktuellen Wind- und Temperaturmessungen in St. Gallen
 
 
 # Über das Projekt
-In diesem Projekt werden automatisch im 10-20-Minutentakt Daten von einer API abgegriffen und in eine Datenbank gespeichert. Auf der Startseite meiner Website sind so immer die neusten Messdaten zu finden. Visuell ansprechend dargestellt findet man eine Anzeige zur Lufttemperatur, Windstärke, Windrichtung und Windspitzen am Bahnhof St. Gallen. Über einen Schalter kann man auch vergangene Daten anschauen und erhält einen Verlauf der letzten 48 Stunden gezeigt. 
+In diesem Projekt werden automatisch im 15-Minutentakt Daten von einer API abgegriffen und in eine Datenbank gespeichert. Auf der Startseite meiner Website sind so immer die neusten Messdaten zu finden. Visuell ansprechend dargestellt findet man eine Anzeige zur Lufttemperatur, Windstärke, Windrichtung und Windspitzen am Bahnhof St. Gallen. Über einen Schalter kann man auch vergangene Daten anschauen und erhält einen Verlauf der letzten 48 Stunden gezeigt. 
 
 # Learnings
 Da ich mich diesem Projekt alleine gestellt habe, sind die Learnings massiv. Grundsätzlich habe ich ein allgemeines Verständnis von Webentwicklung erhalten. Die Erfahrung, einmal komplett alleine eine Website zu bauen und live zu schalten, ist ebenfalls ein wichtiges Learning und auch ein Erfolgserlebnis. Was machen APIs genau, wie erhält man die Daten und wie füllt man damit eine Website ab? All diese Dinge durfte ich in diesen zwei Wochen lernen.
