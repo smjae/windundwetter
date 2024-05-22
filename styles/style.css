@@ -412,6 +412,7 @@ input:checked {
 #controls > button {
   background-color: transparent;
   border: none;
+  transform: rotate(180deg);
 }
 
 #controls > button > i {
@@ -422,7 +423,7 @@ input:checked {
 
 #rangeGroup {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   gap: 5px;
   width: 100%;
   justify-content: center;

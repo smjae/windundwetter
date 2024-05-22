@@ -568,7 +568,6 @@ function addAnimation() {
   video.classList.add("video");
   video.autoplay = true;
   video.loop = true;
-  console.log(temperature, windSpeed);
   if (windSpeed > 5) {
     videoSource = "./img/flying_animation.gif";
   } else if (temperature > 20) {
@@ -647,16 +646,16 @@ document.querySelector(".infoButton").addEventListener("click", function () {
 document.getElementById("dn").addEventListener("change", function () {
   if (this.checked) {
     switchToDarkMode();
-    console.log("switched to dark mode");
+    
     getPastData();
-    console.log("got past data");
+    
     timePassed();
-    console.log("time passed");
+    
     if (window.innerWidth > 600) {
       addScroll();
       getTemperatureforChart();
     }
-    console.log("added scroll");
+    
   } else if (blob) {
     switchToLightMode();
     getDataFromDB();
@@ -964,7 +963,7 @@ function addScroll() {
 }
 
 async function getTemperatureforChart() {
-  console.log("hallo");
+  
   try {
     const response = await fetch("apiTemperature.php");
     const data = await response.json();
